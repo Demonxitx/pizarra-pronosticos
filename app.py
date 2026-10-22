@@ -34,6 +34,9 @@ LEAGUES = {
     "Libertadores": ("soccer", "conmebol.libertadores", None),
 }
 
+# Colombia (UTC-5, sin horario de verano). Así la hora es la misma en tu PC y en la nube.
+TZ = dt.timezone(dt.timedelta(hours=-5))
+
 BASE = "https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard"
 
 
@@ -117,7 +120,7 @@ def load_league(name, day):
             }
         if "home" not in teams or "away" not in teams:
             continue
-        start = dt.datetime.fromisoformat(ev["date"].replace("Z", "+00:00")).astimezone()
+        start = dt.datetime.fromisoformat(ev["date"].replace("Z", "+00:00")).astimezone(TZ)
         st_type = ev["status"]["type"]
         probs = probabilities(comp, teams["home"], teams["away"], sd)
         games.append({
@@ -161,7 +164,7 @@ def render(selected, day, min_conf):
         })
         cards.append(g)
 
-    st.caption(f"Actualizado {dt.datetime.now().strftime('%H:%M:%S')} · se refresca cada 60 s")
+    st.caption(f"Actualizado {dt.datetime.now(TZ).strftime('%H:%M:%S')} · se refresca cada 60 s")
     if not rows:
         st.info("No hay partidos con probabilidad para esta fecha y filtros. Prueba otra fecha o más ligas.")
         return
@@ -202,7 +205,7 @@ st.write("Probabilidades de victoria calculadas con las cuotas del mercado, que 
 
 with st.sidebar:
     st.header("Filtros")
-    day = st.date_input("Fecha", dt.date.today())
+    day = st.date_input("Fecha", dt.datetime.now(TZ).date())
     selected = st.multiselect("Deportes y ligas", list(LEAGUES), default=["NBA", "NFL", "NHL", "MLB"])
     min_conf = st.slider("Probabilidad mínima del favorito (%)", 50, 90, 50)
     st.caption("Fuente de datos: marcadores públicos de ESPN.")
