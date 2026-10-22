@@ -1,12 +1,12 @@
 """
-DEMON PREDICTIONS 2.1
-RED EDITION
+DEMON PREDICTIONS 3.0
+AI EDITION - RED EDITION
 
-Sports Intelligence Platform
+Sports Intelligence & Combo Builder
 
-Datos deportivos: ESPN
+Datos: ESPN
 Zona horaria: Colombia
-Actualización automática: 60 segundos
+Actualización: 60 segundos
 
 Ejecutar:
 streamlit run app.py
@@ -22,12 +22,12 @@ import pandas as pd
 import streamlit as st
 
 
-# =====================================================
+# =========================================================
 # CONFIGURACIÓN
-# =====================================================
+# =========================================================
 
 st.set_page_config(
-    page_title="DEMON PREDICTIONS | RED EDITION",
+    page_title="DEMON PREDICTIONS 3.0",
     page_icon="😈",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -84,91 +84,85 @@ SPORT_ICONS = {
 }
 
 
-# =====================================================
-# CSS PREMIUM
-# =====================================================
+# =========================================================
+# ESTILOS
+# =========================================================
 
 st.markdown(
     """
 <style>
-
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
-
-html, body, .stApp {
-    font-family: 'Inter', sans-serif;
-}
 
 .stApp {
     background:
         radial-gradient(
-            ellipse at top,
-            rgba(185, 15, 40, 0.17),
-            transparent 48%
+            ellipse at 50% -10%,
+            rgba(195, 20, 50, 0.17),
+            transparent 50%
         ),
         #08090e;
     color: #f5f5f7;
+    font-family: 'Inter', sans-serif;
 }
 
 .block-container {
-    max-width: 1450px;
+    max-width: 1500px;
     padding-top: 1.5rem;
     padding-bottom: 3rem;
 }
 
 h1, h2, h3 {
     font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
 }
 
 section[data-testid="stSidebar"] {
     background: #101116;
-    border-right: 1px solid #40202a;
+    border-right: 1px solid #47202c;
 }
 
 section[data-testid="stSidebar"] * {
     color: #eeeeee;
 }
 
-.demon-hero {
-    background:
-        linear-gradient(
-            115deg,
-            #2d0a15,
-            #151119 55%,
-            #270b14
-        );
-    border: 1px solid #772033;
+.hero {
+    background: linear-gradient(
+        115deg,
+        #310b17,
+        #151119 55%,
+        #290b15
+    );
+    border: 1px solid #812238;
     border-radius: 20px;
-    padding: 30px;
+    padding: 32px;
     margin-bottom: 25px;
     box-shadow: 0 0 35px rgba(255, 35, 65, 0.10);
 }
 
-.demon-logo {
+.hero-title {
     font-family: 'Rajdhani', sans-serif;
     font-size: clamp(35px, 5vw, 62px);
     font-weight: 700;
-    color: #ffffff;
     line-height: 1.1;
+    color: white;
 }
 
-.demon-logo span {
+.hero-title span {
     color: #ff304b;
-    text-shadow: 0 0 25px rgba(255, 48, 75, 0.4);
+    text-shadow: 0 0 25px rgba(255,48,75,.4);
 }
 
-.demon-tagline {
+.hero-subtitle {
     color: #b4b4c0;
     font-size: 12px;
     letter-spacing: 2px;
     margin-top: 12px;
 }
 
-.demon-live {
+.live-pill {
     display: inline-block;
     color: #00f29a;
-    background: rgba(0, 240, 140, 0.08);
-    border: 1px solid rgba(0, 240, 140, 0.35);
+    background: rgba(0,240,140,.08);
+    border: 1px solid rgba(0,240,140,.35);
     border-radius: 20px;
     padding: 7px 14px;
     font-size: 11px;
@@ -176,16 +170,16 @@ section[data-testid="stSidebar"] * {
     margin-top: 20px;
 }
 
-.demon-section {
+.section-title {
     font-family: 'Rajdhani', sans-serif;
     font-size: 30px;
     font-weight: 700;
-    color: #ffffff;
+    color: white;
     margin-top: 28px;
     margin-bottom: 4px;
 }
 
-.demon-description {
+.section-description {
     color: #999ba9;
     font-size: 12px;
     margin-bottom: 18px;
@@ -196,15 +190,15 @@ section[data-testid="stSidebar"] * {
     border: 1px solid #30303b;
     border-radius: 16px;
     padding: 22px;
-    margin-bottom: 12px;
     min-height: 135px;
-    transition: all 0.2s ease;
+    margin-bottom: 12px;
+    transition: all .2s ease;
 }
 
 .stat-card:hover {
     border-color: #ff304b;
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(255, 30, 60, 0.12);
+    box-shadow: 0 8px 25px rgba(255,30,60,.12);
 }
 
 .stat-label {
@@ -215,7 +209,7 @@ section[data-testid="stSidebar"] * {
 }
 
 .stat-number {
-    color: #ffffff;
+    color: white;
     font-family: 'Rajdhani', sans-serif;
     font-size: 45px;
     font-weight: 700;
@@ -238,19 +232,19 @@ section[data-testid="stSidebar"] * {
 
 .rank-elite {
     color: #ffd66b;
-    background: rgba(255, 214, 107, 0.12);
+    background: rgba(255,214,107,.12);
     border: 1px solid #78602b;
 }
 
 .rank-power {
     color: #ff5069;
-    background: rgba(255, 50, 80, 0.12);
+    background: rgba(255,50,80,.12);
     border: 1px solid #813040;
 }
 
 .rank-edge {
     color: #ffb65c;
-    background: rgba(255, 180, 75, 0.1);
+    background: rgba(255,180,75,.1);
     border: 1px solid #78532d;
 }
 
@@ -258,6 +252,26 @@ section[data-testid="stSidebar"] * {
     color: #b8b9c5;
     background: #23242e;
     border: 1px solid #41424e;
+}
+
+.combo-panel {
+    background: linear-gradient(135deg, #241018, #14151c);
+    border: 1px solid #733044;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.combo-number {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 45px;
+    color: #ff4059;
+}
+
+.combo-label {
+    font-size: 12px;
+    color: #b7b7c3;
 }
 
 div[data-testid="stVerticalBlockBorderWrapper"] > div {
@@ -272,24 +286,24 @@ div[data-testid="stMetric"] {
 }
 
 .stButton > button[kind="primary"] {
-    background: linear-gradient(90deg, #b91531, #f02b49);
+    background: linear-gradient(90deg,#b91531,#f02b49);
     border: none;
-    color: #ffffff;
+    color: white;
     font-weight: 800;
     border-radius: 10px;
 }
 
 .stButton > button[kind="primary"]:hover {
     background: #ff3855;
-    color: #ffffff;
+    color: white;
     border: none;
 }
 
 .stProgress > div > div > div {
-    background: linear-gradient(90deg, #b91531, #ff4059);
+    background: linear-gradient(90deg,#b91531,#ff4059);
 }
 
-.demon-footer {
+.footer {
     color: #81828f;
     border-top: 1px solid #40202a;
     text-align: center;
@@ -305,11 +319,11 @@ div[data-testid="stMetric"] {
         padding-right: 12px;
     }
 
-    .demon-hero {
+    .hero {
         padding: 20px;
     }
 
-    .demon-logo {
+    .hero-title {
         font-size: 35px;
     }
 
@@ -322,27 +336,25 @@ div[data-testid="stMetric"] {
         font-size: 34px;
     }
 
-    .demon-section {
+    .section-title {
         font-size: 25px;
     }
 }
-
 </style>
 """,
     unsafe_allow_html=True,
 )
 
 
-# =====================================================
-# COMPONENTES VISUALES
-# =====================================================
+# =========================================================
+# COMPONENTES
+# =========================================================
 
 def section_title(title, description=""):
     html = (
-        f'<div class="demon-section">{escape(title)}</div>'
-        f'<div class="demon-description">{escape(description)}</div>'
+        f'<div class="section-title">{escape(title)}</div>'
+        f'<div class="section-description">{escape(description)}</div>'
     )
-
     st.markdown(html, unsafe_allow_html=True)
 
 
@@ -354,48 +366,36 @@ def stat_card(label, value, footer):
         f'<div class="stat-footer">{escape(str(footer))}</div>'
         '</div>'
     )
-
     st.markdown(html, unsafe_allow_html=True)
 
 
 def demon_rank(prob):
     if prob >= 80:
         return "🔥 DEMON ELITE", "rank-elite"
-
     if prob >= 70:
         return "🔴 DEMON POWER", "rank-power"
-
     if prob >= 60:
         return "⚡ DEMON EDGE", "rank-edge"
-
     return "⚖️ EQUILIBRADO", "rank-balanced"
 
 
 def rank_badge(prob):
     title, css = demon_rank(prob)
-
-    html = (
-        f'<span class="rank {css}">'
-        f'{escape(title)}'
-        '</span>'
+    st.markdown(
+        f'<span class="rank {css}">{escape(title)}</span>',
+        unsafe_allow_html=True,
     )
 
-    st.markdown(html, unsafe_allow_html=True)
 
-
-# =====================================================
-# CÁLCULOS DE PROBABILIDADES
-# =====================================================
+# =========================================================
+# PROBABILIDADES
+# =========================================================
 
 def ml_to_prob(ml):
     try:
         value = float(
-            str(ml)
-            .upper()
-            .replace("EVEN", "100")
-            .replace("+", "")
+            str(ml).upper().replace("EVEN", "100").replace("+", "")
         )
-
     except (TypeError, ValueError):
         return None
 
@@ -409,35 +409,26 @@ def ml_to_prob(ml):
 
 
 def pick_ml(odds, side):
-    if side == "draw":
-        block = odds.get("drawOdds")
-    else:
-        block = odds.get(side + "TeamOdds")
+    key = "drawOdds" if side == "draw" else side + "TeamOdds"
+    block = odds.get(key)
 
     if isinstance(block, dict):
-        moneyline = block.get("moneyLine")
-
-        if moneyline is not None:
-            return ml_to_prob(moneyline)
+        value = block.get("moneyLine")
+        if value is not None:
+            return ml_to_prob(value)
 
     moneyline = odds.get("moneyline", {})
-
     if not isinstance(moneyline, dict):
         return None
 
     side_block = moneyline.get(side, {})
-
     if not isinstance(side_block, dict):
         return None
 
-    for key in ("close", "open"):
-        item = side_block.get(key)
-
-        if isinstance(item, dict):
-            value = item.get("odds")
-
-            if value is not None:
-                return ml_to_prob(value)
+    for period in ("close", "open"):
+        item = side_block.get(period)
+        if isinstance(item, dict) and item.get("odds") is not None:
+            return ml_to_prob(item["odds"])
 
     return None
 
@@ -487,11 +478,6 @@ def probabilities(comp, home, away, sd, sport):
     pa = pick_ml(odds, "away")
     pd_ = pick_ml(odds, "draw")
 
-    # En fútbol necesitamos tres resultados:
-    # local, empate y visitante.
-    # No convertir cuotas de dos vías en un mercado
-    # de tres resultados.
-
     if sport == "soccer":
         if ph is None or pa is None or pd_ is None:
             return None
@@ -521,12 +507,7 @@ def probabilities(comp, home, away, sd, sport):
             "Cuotas del mercado",
         )
 
-    p = spread_prob(
-        odds,
-        home["abbr"],
-        away["abbr"],
-        sd,
-    )
+    p = spread_prob(odds, home["abbr"], away["abbr"], sd)
 
     if p is not None:
         return (
@@ -539,56 +520,41 @@ def probabilities(comp, home, away, sd, sport):
     return None
 
 
-# =====================================================
+# =========================================================
 # ESPN
-# =====================================================
+# =========================================================
 
 @st.cache_data(ttl=60, show_spinner=False)
 def load_league(name, day):
     sport, league, sd = LEAGUES[name]
 
-    url = BASE.format(
-        sport=sport,
-        league=league,
-    )
+    url = BASE.format(sport=sport, league=league)
 
     response = requests.get(
         url,
-        params={
-            "dates": day.strftime("%Y%m%d")
-        },
-        headers={
-            "User-Agent": "Mozilla/5.0"
-        },
+        params={"dates": day.strftime("%Y%m%d")},
+        headers={"User-Agent": "Mozilla/5.0"},
         timeout=15,
     )
 
     response.raise_for_status()
 
-    events = response.json().get("events", [])
-
     games = []
 
-    for event in events:
+    for event in response.json().get("events", []):
         competitions = event.get("competitions") or []
 
         if not competitions:
             continue
 
         comp = competitions[0]
-
         teams = {}
 
         for competitor in comp.get("competitors", []):
             team = competitor.get("team", {})
-
             logos = team.get("logos") or []
 
-            logo = None
-
-            if logos:
-                logo = logos[0].get("href")
-
+            logo = logos[0].get("href") if logos else None
             if not logo:
                 logo = team.get("logo")
 
@@ -619,7 +585,7 @@ def load_league(name, day):
         )
 
         games.append({
-            "id": event.get("id"),
+            "id": f"{name}-{event.get('id')}",
             "liga": name,
             "sport": sport,
             "hora": start,
@@ -633,74 +599,79 @@ def load_league(name, day):
     return games
 
 
-# =====================================================
+# =========================================================
 # FAVORITOS
-# =====================================================
+# =========================================================
 
 def favorite(game):
     if game["probs"] is None:
         return None
 
-    ph, pa, pd_, source = game["probs"]
+    ph, pa, pd_, _ = game["probs"]
 
-    options = [
+    choices = [
         (ph, game["home"]["name"]),
         (pa, game["away"]["name"]),
     ]
 
     if pd_ is not None:
-        options.append((pd_, "Empate"))
+        choices.append((pd_, "Empate"))
 
-    return max(options, key=lambda x: x[0])
+    return max(choices, key=lambda item: item[0])
 
 
-# =====================================================
-# TARJETAS DE PARTIDOS
-# =====================================================
+def upcoming_favorites(games, min_conf):
+    result = []
+
+    for game in games:
+        if game["state"] != "pre":
+            continue
+
+        fav = favorite(game)
+
+        if fav and fav[0] >= min_conf:
+            result.append(game)
+
+    return sorted(
+        result,
+        key=lambda game: favorite(game)[0],
+        reverse=True,
+    )
+
+
+# =========================================================
+# TARJETAS
+# =========================================================
 
 def show_logo(team):
     logo = team.get("logo")
 
     if logo and str(logo).startswith("https://"):
-        try:
-            st.image(logo, width=65)
-        except Exception:
-            st.markdown("🏆")
+        st.image(logo, width=65)
     else:
         st.markdown("🏆")
 
 
 def probability_bar(name, value):
     st.markdown(f"**{name}: {value:.1f}%**")
-
-    st.progress(
-        min(max(value / 100, 0), 1)
-    )
+    st.progress(min(max(value / 100, 0), 1))
 
 
 def match_card(game, featured=False):
     with st.container(border=True):
-        sport_icon = SPORT_ICONS.get(
-            game["sport"],
-            "🏆",
-        )
-
         left, right = st.columns([3, 1])
 
         with left:
-            st.markdown(
-                f"### {sport_icon} {game['liga']}"
-            )
+            icon = SPORT_ICONS.get(game["sport"], "🏆")
+            st.markdown(f"### {icon} {game['liga']}")
 
         with right:
             if game["state"] == "in":
-                st.error("🔴 LIVE")
-
+                st.error("LIVE")
             elif game["state"] == "post":
                 st.success("FINAL")
-
             else:
-                st.info("PRÓXIMO")
+                st.caption("PRÓXIMO")
 
         st.caption(
             "🕒 "
@@ -708,22 +679,14 @@ def match_card(game, featured=False):
             + " · Colombia"
         )
 
-        st.divider()
-
-        away_col, middle_col, home_col = st.columns(
-            [2, 1, 2]
-        )
+        away_col, vs_col, home_col = st.columns([2, 1, 2])
 
         with away_col:
             show_logo(game["away"])
-
-            st.markdown(
-                f"**{game['away']['name']}**"
-            )
-
+            st.markdown(f"**{game['away']['name']}**")
             st.caption("VISITANTE")
 
-        with middle_col:
+        with vs_col:
             st.markdown("### VS")
 
             if game["state"] != "pre":
@@ -734,83 +697,55 @@ def match_card(game, featured=False):
 
         with home_col:
             show_logo(game["home"])
-
-            st.markdown(
-                f"**{game['home']['name']}**"
-            )
-
+            st.markdown(f"**{game['home']['name']}**")
             st.caption("LOCAL")
 
         if game["estado"]:
-            st.caption(
-                f"📡 {game['estado']}"
-            )
+            st.caption(game["estado"])
 
         st.divider()
 
         if game["probs"] is None:
-            st.warning(
-                "⏳ Probabilidades no disponibles."
-            )
+            st.warning("Probabilidades no disponibles.")
             return
 
         ph, pa, pd_, source = game["probs"]
-
         fav = favorite(game)
 
         if fav:
             prob, name = fav
-
             rank_badge(prob)
-
-            st.markdown(
-                f"🎯 **Favorito del mercado: {name}**"
-            )
-
-            st.metric(
-                "Probabilidad implícita",
-                f"{prob:.1f}%",
-            )
+            st.markdown(f"🎯 **Favorito: {name}**")
+            st.metric("Probabilidad implícita", f"{prob:.1f}%")
 
         st.markdown("##### 📊 PROBABILIDADES")
 
-        probability_bar(
-            game["away"]["abbr"],
-            pa,
-        )
+        probability_bar(game["away"]["abbr"], pa)
 
         if pd_ is not None:
-            probability_bar(
-                "EMPATE",
-                pd_,
-            )
+            probability_bar("EMPATE", pd_)
 
-        probability_bar(
-            game["home"]["abbr"],
-            ph,
-        )
+        probability_bar(game["home"]["abbr"], ph)
 
-        st.caption(f"📡 Fuente: {source}")
+        st.caption(f"Fuente: {source}")
 
         if featured:
-            st.caption(
-                "⭐ Destacado por favoritismo del mercado."
-            )
+            st.caption("⭐ Destacado por favoritismo del mercado.")
 
 
-# =====================================================
-# HEADER PRINCIPAL
-# =====================================================
+# =========================================================
+# CABECERA
+# =========================================================
 
 st.markdown(
-    '<div class="demon-hero">'
-    '<div class="demon-logo">'
+    '<div class="hero">'
+    '<div class="hero-title">'
     '😈 DEMON <span>PREDICTIONS</span>'
     '</div>'
-    '<div class="demon-tagline">'
-    'RED EDITION · SPORTS INTELLIGENCE PLATFORM'
+    '<div class="hero-subtitle">'
+    '3.0 AI EDITION · SPORTS INTELLIGENCE'
     '</div>'
-    '<div class="demon-live">'
+    '<div class="live-pill">'
     '● LIVE DATA · POWERED BY ESPN'
     '</div>'
     '</div>',
@@ -818,115 +753,255 @@ st.markdown(
 )
 
 
-# =====================================================
+# =========================================================
 # SIDEBAR
-# =====================================================
+# =========================================================
 
 with st.sidebar:
     st.title("😈 DEMON")
-
-    st.markdown("**PREDICTIONS 2.1**")
-
-    st.caption("🔴 RED EDITION")
+    st.markdown("**PREDICTIONS 3.0**")
+    st.caption("🔴 AI EDITION")
 
     st.divider()
 
     st.subheader("⚙️ CENTRO DE CONTROL")
 
     day = st.date_input(
-        "📅 Fecha de partidos",
+        "📅 Fecha",
         dt.datetime.now(TZ).date(),
     )
 
     selected = st.multiselect(
-        "🏆 Seleccionar ligas",
-        list(LEAGUES.keys()),
-        default=[
-            "NBA",
-            "NFL",
-            "NHL",
-            "MLB",
-        ],
+        "🏆 Ligas",
+        list(LEAGUES),
+        default=["NBA", "NFL", "NHL", "MLB"],
     )
 
     min_conf = st.slider(
-        "🎯 Probabilidad mínima (%)",
+        "🎯 Probabilidad mínima",
         50,
         90,
         50,
     )
 
-    only_live = st.checkbox(
-        "🔴 Solo partidos en vivo"
-    )
+    only_live = st.checkbox("🔴 Solo partidos en vivo")
 
     search = st.text_input(
         "🔎 Buscar equipo",
-        placeholder="Ej: Lakers, Madrid...",
+        placeholder="Ej: Lakers...",
     )
 
     st.divider()
 
     if st.button(
-        "🔄 ACTUALIZAR DATOS",
+        "🔄 ACTUALIZAR",
         type="primary",
         use_container_width=True,
     ):
         st.cache_data.clear()
         st.rerun()
 
-    st.divider()
-
-    st.markdown("**📡 ESTADO DEL SISTEMA**")
-
-    st.success("🟢 SISTEMA ACTIVO")
-
-    st.caption("Fuente: ESPN")
-    st.caption("Actualización: 60 segundos")
-    st.caption("Zona horaria: Colombia")
+    st.caption("📡 ESPN · Actualización cada 60 segundos")
+    st.caption("🌎 Hora Colombia")
 
 
-# =====================================================
+# =========================================================
+# CONSTRUCTOR DE COMBINADAS
+# =========================================================
+
+def combo_builder(games):
+    section_title(
+        "🎰 DEMON COMBO BUILDER",
+        "Construye y analiza tus combinadas deportivas",
+    )
+
+    candidates = upcoming_favorites(games, min_conf)
+
+    if not candidates:
+        st.info(
+            "No hay partidos próximos con probabilidades "
+            "suficientes para construir una combinada."
+        )
+        return
+
+    lookup = {}
+
+    for game in candidates:
+        fav = favorite(game)
+
+        if not fav:
+            continue
+
+        prob, team = fav
+
+        label = (
+            f"{game['liga']} | "
+            f"{game['away']['name']} vs {game['home']['name']} "
+            f"| {team} ({prob:.1f}%)"
+        )
+
+        lookup[game["id"]] = {
+            "label": label,
+            "game": game,
+            "team": team,
+            "prob": prob,
+        }
+
+    options = list(lookup)
+
+    chosen = st.multiselect(
+        "🏆 Selecciona los favoritos para tu combinada",
+        options,
+        format_func=lambda key: lookup[key]["label"],
+        max_selections=12,
+        key="combo_selections",
+    )
+
+    if not chosen:
+        st.info(
+            "Selecciona al menos un partido para "
+            "calcular la probabilidad de la combinada."
+        )
+        return
+
+    combined_probability = 1.0
+
+    rows = []
+
+    for key in chosen:
+        item = lookup[key]
+
+        combined_probability *= item["prob"] / 100
+
+        rows.append({
+            "Liga": item["game"]["liga"],
+            "Selección": item["team"],
+            "Probabilidad %": round(item["prob"], 1),
+        })
+
+    combined_pct = combined_probability * 100
+
+    # La multiplicación supone independencia
+    # entre los resultados seleccionados.
+
+    st.dataframe(
+        pd.DataFrame(rows),
+        hide_index=True,
+        use_container_width=True,
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        stat_card(
+            "🎯 PROBABILIDAD CONJUNTA",
+            f"{combined_pct:.2f}%",
+            "Estimación bajo independencia",
+        )
+
+    with c2:
+        stat_card(
+            "🏆 SELECCIONES",
+            len(chosen),
+            "Partidos en la combinada",
+        )
+
+    with c3:
+        stat_card(
+            "⚠️ PROBABILIDAD DE FALLO",
+            f"{100 - combined_pct:.2f}%",
+            "Probabilidad complementaria estimada",
+        )
+
+    st.progress(
+        min(max(combined_probability, 0), 1)
+    )
+
+    section_title(
+        "⚠️ DEMON RISK ANALYZER",
+        "Evaluación aproximada del riesgo acumulado",
+    )
+
+    if combined_pct >= 70:
+        st.success(
+            "La combinada tiene una probabilidad "
+            "conjunta estimada elevada, bajo los "
+            "supuestos del cálculo."
+        )
+    elif combined_pct >= 40:
+        st.warning(
+            "La combinada tiene una probabilidad "
+            "estimada intermedia. Existe una "
+            "posibilidad considerable de fallo."
+        )
+    else:
+        st.error(
+            "La combinada tiene una probabilidad "
+            "estimada baja de acertar todas "
+            "las selecciones."
+        )
+
+    st.caption(
+        "El cálculo multiplica las probabilidades "
+        "de cada selección y supone independencia. "
+        "Si los resultados están relacionados, "
+        "la estimación puede ser incorrecta. "
+        "Además, las probabilidades individuales "
+        "no garantizan resultados."
+    )
+
+    st.markdown("#### 📉 Riesgo al añadir selecciones")
+
+    evolution = []
+    running = 1.0
+
+    for index, key in enumerate(chosen, start=1):
+        running *= lookup[key]["prob"] / 100
+
+        evolution.append({
+            "Selecciones": index,
+            "Probabilidad %": running * 100,
+        })
+
+    evolution_df = pd.DataFrame(evolution)
+
+    st.line_chart(
+        evolution_df.set_index("Selecciones"),
+        color="#ff304b",
+    )
+
+
+# =========================================================
 # DASHBOARD
-# =====================================================
+# =========================================================
 
 def dashboard():
     if not selected:
-        st.warning(
-            "Selecciona al menos una liga."
-        )
+        st.warning("Selecciona al menos una liga.")
         return
 
     all_games = []
     errors = []
 
-    with st.spinner("Cargando datos deportivos..."):
+    with st.spinner("😈 Cargando encuentros..."):
         for name in selected:
             try:
-                all_games.extend(
-                    load_league(name, day)
-                )
-            except requests.RequestException:
-                errors.append(name)
-            except (KeyError, ValueError, TypeError):
+                all_games.extend(load_league(name, day))
+            except (requests.RequestException, ValueError, KeyError, TypeError):
                 errors.append(name)
 
     if errors:
         st.warning(
-            "No se pudieron cargar estas ligas: "
-            + ", ".join(errors)
+            "No se pudieron cargar: " + ", ".join(errors)
         )
 
     games = all_games
 
     if only_live:
-        games = [
-            g for g in games
-            if g["state"] == "in"
-        ]
+        games = [g for g in games if g["state"] == "in"]
 
     if search.strip():
-        term = search.lower().strip()
+        term = search.strip().lower()
 
         games = [
             g for g in games
@@ -936,20 +1011,12 @@ def dashboard():
             )
         ]
 
-    with_probs = [
-        g for g in games
-        if g["probs"] is not None
-    ]
-
-    live_games = [
-        g for g in games
-        if g["state"] == "in"
-    ]
+    with_probs = [g for g in games if g["probs"] is not None]
+    live_games = [g for g in games if g["state"] == "in"]
 
     strong = [
         g for g in with_probs
-        if favorite(g)
-        and favorite(g)[0] >= 70
+        if favorite(g) and favorite(g)[0] >= 70
     ]
 
     st.caption(
@@ -966,11 +1033,7 @@ def dashboard():
     c1, c2, c3, c4 = st.columns(4)
 
     with c1:
-        stat_card(
-            "🏆 PARTIDOS",
-            len(games),
-            "Encuentros encontrados",
-        )
+        stat_card("🏆 PARTIDOS", len(games), "Encontrados")
 
     with c2:
         stat_card(
@@ -994,34 +1057,17 @@ def dashboard():
         )
 
     if not games:
-        st.info(
-            "No hay encuentros con los filtros seleccionados."
-        )
+        st.info("No hay encuentros disponibles.")
         return
 
-    # =================================================
     # TOP PICKS
-    # =================================================
 
     section_title(
-        "🔥 DEMON TOP PICKS",
-        "Los favoritos más marcados del mercado",
+        "🔥 DEMON TOP PICKS PRO",
+        "Favoritos destacados del mercado",
     )
 
-    upcoming = [
-        g for g in with_probs
-        if (
-            g["state"] == "pre"
-            and favorite(g)
-            and favorite(g)[0] >= min_conf
-        )
-    ]
-
-    top_games = sorted(
-        upcoming,
-        key=lambda g: favorite(g)[0],
-        reverse=True,
-    )[:3]
+    top_games = upcoming_favorites(games, min_conf)[:3]
 
     if top_games:
         cols = st.columns(len(top_games))
@@ -1030,60 +1076,54 @@ def dashboard():
             with cols[i]:
                 match_card(game, featured=True)
     else:
-        st.info(
-            "No hay TOP PICKS disponibles para estos filtros."
-        )
+        st.info("No hay favoritos próximos disponibles.")
 
-    # =================================================
+    # COMBINADAS
+
+    combo_builder(games)
+
     # RANKING
-    # =================================================
 
     section_title(
-        "🎯 RANKING DE PRONÓSTICOS",
-        "Probabilidades implícitas del mercado",
+        "🏆 DEMON POWER RANKING",
+        "Favoritos ordenados por probabilidad",
     )
 
     rows = []
 
-    for g in with_probs:
-        fav = favorite(g)
+    for game in games:
+        fav = favorite(game)
 
-        if not fav:
+        if fav is None or fav[0] < min_conf:
             continue
 
-        prob, name = fav
-
-        if prob < min_conf:
-            continue
-
+        prob, team = fav
         rank, _ = demon_rank(prob)
 
         rows.append({
-            "Liga": g["liga"],
-            "Hora": g["hora"].strftime("%H:%M"),
+            "Liga": game["liga"],
+            "Hora": game["hora"].strftime("%H:%M"),
             "Partido": (
-                g["away"]["name"]
+                game["away"]["name"]
                 + " vs "
-                + g["home"]["name"]
+                + game["home"]["name"]
             ),
-            "Favorito": name,
+            "Favorito": team,
             "Probabilidad": round(prob, 1),
             "Clasificación": rank,
-            "Estado": g["estado"],
+            "Estado": game["estado"],
         })
 
     if rows:
-        df = pd.DataFrame(rows)
-
-        df = df.sort_values(
+        df = pd.DataFrame(rows).sort_values(
             "Probabilidad",
             ascending=False,
         )
 
         st.dataframe(
             df,
-            use_container_width=True,
             hide_index=True,
+            use_container_width=True,
             column_config={
                 "Probabilidad":
                     st.column_config.ProgressColumn(
@@ -1095,35 +1135,27 @@ def dashboard():
             },
         )
 
-        csv = df.to_csv(
-            index=False
-        ).encode("utf-8-sig")
-
         st.download_button(
-            "📥 DESCARGAR PRONÓSTICOS",
-            csv,
-            "demon_predictions.csv",
+            "📥 DESCARGAR RANKING",
+            df.to_csv(index=False).encode("utf-8-sig"),
+            "demon_ranking.csv",
             "text/csv",
         )
     else:
-        st.info(
-            "No hay pronósticos que cumplan el filtro."
-        )
+        st.info("No hay favoritos para este filtro.")
 
-    # =================================================
     # MATCH CENTER
-    # =================================================
 
     section_title(
         "⚽ DEMON MATCH CENTER",
-        "Explora todos los encuentros",
+        "Todos los encuentros por deporte",
     )
 
     tabs = st.tabs([
         "🔥 TODOS",
         "⚽ FÚTBOL",
         "🏀 BASKET",
-        "🏈 NFL / NCAA",
+        "🏈 NFL/NCAA",
         "🏒 NHL",
         "⚾ MLB",
     ])
@@ -1141,10 +1173,7 @@ def dashboard():
         with tab:
             filtered = [
                 g for g in games
-                if (
-                    category is None
-                    or g["sport"] == category
-                )
+                if category is None or g["sport"] == category
             ]
 
             filtered = [
@@ -1155,23 +1184,13 @@ def dashboard():
                 )
             ]
 
-            filtered = sorted(
-                filtered,
-                key=lambda g: (
-                    g["liga"],
-                    g["hora"],
-                ),
+            filtered.sort(
+                key=lambda g: (g["liga"], g["hora"])
             )
 
             if not filtered:
-                st.info(
-                    "No hay encuentros en esta categoría."
-                )
+                st.info("No hay partidos en esta categoría.")
                 continue
-
-            st.caption(
-                f"🏆 {len(filtered)} encuentros"
-            )
 
             for i in range(0, len(filtered), 2):
                 cols = st.columns(2)
@@ -1183,46 +1202,51 @@ def dashboard():
                         with cols[j]:
                             match_card(filtered[index])
 
-    # =================================================
-    # ANALYTICS
-    # =================================================
+    # AI LAB
 
     section_title(
-        "📈 DEMON ANALYTICS",
-        "Distribución de encuentros por liga",
+        "🧠 DEMON AI LAB",
+        "Centro de desarrollo del modelo predictivo",
     )
 
-    league_counts = {}
+    with st.container(border=True):
+        st.markdown("### 🤖 ESTADO DEL MOTOR DE IA")
 
-    for g in games:
-        league_counts[g["liga"]] = (
-            league_counts.get(g["liga"], 0) + 1
+        st.info(
+            "El modelo predictivo independiente todavía "
+            "no está entrenado. Actualmente las "
+            "probabilidades provienen de cuotas del "
+            "mercado o estimaciones por spread."
         )
 
-    if league_counts:
-        stats_df = pd.DataFrame({
-            "Liga": list(league_counts.keys()),
-            "Partidos": list(league_counts.values()),
-        })
+        st.markdown(
+            "**Próxima etapa:** recopilar resultados "
+            "históricos de NBA y fútbol, construir "
+            "variables estadísticas y entrenar "
+            "modelos específicos para cada deporte."
+        )
 
-        st.bar_chart(
-            stats_df.set_index("Liga"),
-            color="#ff304b",
+        st.caption(
+            "Las probabilidades de un futuro modelo "
+            "solo se publicarán después de evaluarlo "
+            "con partidos históricos no utilizados "
+            "durante su entrenamiento."
         )
 
     st.divider()
 
     st.info(
-        "📊 Las probabilidades proceden de cuotas "
-        "del mercado o de estimaciones basadas en spread. "
-        "No garantizan resultados y no representan "
-        "necesariamente oportunidades de apuesta rentables."
+        "Las probabilidades mostradas son estimaciones "
+        "basadas en cuotas o spread. No garantizan "
+        "resultados. Las combinadas acumulan riesgo "
+        "y una probabilidad alta no implica que una "
+        "apuesta sea rentable."
     )
 
 
-# =====================================================
+# =========================================================
 # ACTUALIZACIÓN AUTOMÁTICA
-# =====================================================
+# =========================================================
 
 @st.fragment(run_every=60)
 def live_dashboard():
@@ -1232,17 +1256,17 @@ def live_dashboard():
 live_dashboard()
 
 
-# =====================================================
+# =========================================================
 # FOOTER
-# =====================================================
+# =========================================================
 
 st.markdown(
-    '<div class="demon-footer">'
-    '😈 DEMON PREDICTIONS 2.1'
+    '<div class="footer">'
+    '😈 DEMON PREDICTIONS 3.0'
     '<br><br>'
-    'RED EDITION · SPORTS INTELLIGENCE'
+    'AI EDITION · RED EDITION'
     '<br><br>'
-    'DATOS DE ESPN · ACTUALIZACIÓN AUTOMÁTICA'
+    'SPORTS INTELLIGENCE & COMBO BUILDER'
     '<br><br>'
     '© 2026 DEMON PREDICTIONS'
     '</div>',
