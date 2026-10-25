@@ -552,6 +552,11 @@ def save_combo(name, chosen_items, combined_pct):
             "fecha_partido": (
                 game["hora"].isoformat()
             ),
+            "mercado": (
+    "ganador_partido_incluye_prorroga"
+    if game["liga"] in ("NBA", "NHL")
+    else None
+),
             "estado": "pendiente",
         })
 
@@ -1397,7 +1402,18 @@ def combo_builder(games, min_conf):
             ),
             max_chars=100,
         )
+        requiere_confirmacion = any(
+            item["game"]["liga"] in ("NBA", "NHL")
+            for item in chosen_items
+        )
 
+        mercado_confirmado = st.checkbox(
+            "Confirmo que mis selecciones NBA/NHL "
+            "son al ganador del partido, "
+            "incluyendo prórroga.",
+            value=False,
+            disabled=not requiere_confirmacion,
+        )
         submitted = st.form_submit_button(
             "💾 GUARDAR COMBINADA",
             type="primary",
@@ -1408,6 +1424,13 @@ def combo_builder(games, min_conf):
         if not name.strip():
             st.warning(
                 "Introduce un nombre para la combinada."
+            )
+
+                elif requiere_confirmacion and not mercado_confirmado:
+            st.warning(
+                "Debes confirmar que tus selecciones "
+                "NBA/NHL son al ganador del partido "
+                "incluyendo prórroga."
             )
 
         else:
