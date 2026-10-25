@@ -1426,7 +1426,7 @@ def combo_builder(games, min_conf):
                 "Introduce un nombre para la combinada."
             )
 
-                elif requiere_confirmacion and not mercado_confirmado:
+        elif requiere_confirmacion and not mercado_confirmado:
             st.warning(
                 "Debes confirmar que tus selecciones "
                 "NBA/NHL son al ganador del partido "
