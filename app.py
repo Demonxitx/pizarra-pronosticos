@@ -1080,8 +1080,8 @@ def hero():
 
 def combo_history():
     section_title(
-        "💾 DEMON COMBO HISTORY",
-        "Historial permanente de tus combinadas",
+        "🏆 DEMON PERFORMANCE HISTORY 4.2",
+        "Resultados reales, historial y rendimiento deportivo",
     )
 
     if st.button(
@@ -1092,115 +1092,349 @@ def combo_history():
 
     try:
         combos, picks = load_history()
-
     except Exception:
         st.error(
-            "No se pudo consultar el historial. "
-            "Comprueba la conexión con Supabase."
+            "No se pudo consultar el historial de Supabase."
         )
         return
 
     if not combos:
         st.info(
-            "Todavía no tienes combinadas guardadas. "
-            "Crea tu primera combinada en DEMON COMBO BUILDER."
+            "Todavía no tienes combinadas guardadas."
         )
         return
 
-    total = len(combos)
+    def estado_visual(estado):
+        estados = {
+            "ganada": "🟢 GANADA",
+            "perdida": "🔴 PERDIDA",
+            "pendiente": "🟡 PENDIENTE",
+            "anulada": "⚪ ANULADA",
+        }
+        return estados.get(
+            str(estado).lower(),
+            "⚪ SIN CLASIFICAR",
+        )
 
-    pending = sum(
-        1
-        for combo in combos
-        if combo["estado"] == "pendiente"
+    def porcentaje(aciertos, total):
+        if total == 0:
+            return 0.0
+        return aciertos / total * 100
+
+    total_combos = len(combos)
+
+    combos_ganadas = sum(
+        c.get("estado") == "ganada"
+        for c in combos
     )
 
-    c1, c2 = st.columns(2)
+    combos_perdidas = sum(
+        c.get("estado") == "perdida"
+        for c in combos
+    )
+
+    combos_pendientes = sum(
+        c.get("estado") == "pendiente"
+        for c in combos
+    )
+
+    combos_anuladas = sum(
+        c.get("estado") == "anulada"
+        for c in combos
+    )
+
+    picks_ganadas = sum(
+        p.get("estado") == "ganada"
+        for p in picks
+    )
+
+    picks_perdidas = sum(
+        p.get("estado") == "perdida"
+        for p in picks
+    )
+
+    picks_pendientes = sum(
+        p.get("estado") == "pendiente"
+        for p in picks
+    )
+
+    picks_anuladas = sum(
+        p.get("estado") == "anulada"
+        for p in picks
+    )
+
+    combos_resueltas = (
+        combos_ganadas + combos_perdidas
+    )
+
+    picks_resueltas = (
+        picks_ganadas + picks_perdidas
+    )
+
+    section_title(
+        "📊 DEMON PERFORMANCE STATS",
+        "Estadísticas calculadas con resultados registrados",
+    )
+
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
         stat_card(
             "🎰 COMBINADAS",
-            total,
-            "Últimas 100 combinadas",
+            total_combos,
+            "Historial consultado",
         )
 
     with c2:
         stat_card(
-            "⏳ PENDIENTES",
-            pending,
-            "En espera de verificación",
+            "🟢 GANADAS",
+            combos_ganadas,
+            "Combinadas acertadas",
         )
+
+    with c3:
+        stat_card(
+            "🔴 PERDIDAS",
+            combos_perdidas,
+            "Combinadas falladas",
+        )
+
+    with c4:
+        stat_card(
+            "🟡 PENDIENTES",
+            combos_pendientes,
+            "Esperando resultados",
+        )
+
+    st.divider()
+
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        stat_card(
+            "🎯 PICKS GANADAS",
+            picks_ganadas,
+            "Selecciones acertadas",
+        )
+
+    with c2:
+        stat_card(
+            "❌ PICKS PERDIDAS",
+            picks_perdidas,
+            "Selecciones falladas",
+        )
+
+    with c3:
+        stat_card(
+            "🏆 ACIERTO INDIVIDUAL",
+            f"{porcentaje(picks_ganadas, picks_resueltas):.1f}%",
+            f"{picks_resueltas} selecciones resueltas",
+        )
+
+    if combos_resueltas:
+        st.metric(
+            "🏆 ACIERTO DE COMBINADAS",
+            f"{porcentaje(combos_ganadas, combos_resueltas):.1f}%",
+        )
+
+    st.caption(
+        "Los porcentajes excluyen selecciones pendientes "
+        "y anuladas. No representan rentabilidad económica."
+    )
+
+    section_title(
+        "🏟️ RENDIMIENTO POR LIGA",
+        "Resultados individuales registrados",
+    )
+
+    league_stats = {}
+
+    for pick in picks:
+        liga = pick.get("liga", "Sin liga")
+        estado = pick.get("estado")
+
+        if liga not in league_stats:
+            league_stats[liga] = {
+                "ganadas": 0,
+                "perdidas": 0,
+            }
+
+        if estado == "ganada":
+            league_stats[liga]["ganadas"] += 1
+
+        elif estado == "perdida":
+            league_stats[liga]["perdidas"] += 1
+
+    league_rows = []
+
+    for liga, valores in league_stats.items():
+        ganadas = valores["ganadas"]
+        perdidas = valores["perdidas"]
+        total = ganadas + perdidas
+
+        if total == 0:
+            continue
+
+        league_rows.append({
+            "Liga": liga,
+            "Ganadas": ganadas,
+            "Perdidas": perdidas,
+            "Resueltas": total,
+            "Acierto %": round(
+                porcentaje(ganadas, total),
+                1,
+            ),
+        })
+
+    if league_rows:
+        df_leagues = pd.DataFrame(
+            league_rows
+        ).sort_values(
+            ["Acierto %", "Resueltas"],
+            ascending=[False, False],
+        )
+
+        st.dataframe(
+            df_leagues,
+            hide_index=True,
+            use_container_width=True,
+        )
+
+    else:
+        st.info(
+            "Todavía no hay selecciones resueltas "
+            "para calcular estadísticas por liga."
+        )
+
+    section_title(
+        "📜 HISTORIAL DE COMBINADAS",
+        "Consulta cada apuesta y sus resultados finales",
+    )
 
     for combo in combos:
         combo_picks = [
             pick
             for pick in picks
-            if pick["combo_id"] == combo["id"]
+            if pick.get("combo_id") == combo["id"]
         ]
 
-        title = (
-            f"🎰 {combo['nombre']} "
-            f"· {combo['estado'].upper()}"
+        estado = combo.get(
+            "estado",
+            "pendiente",
         )
 
-        with st.expander(title):
+        titulo = (
+            f"{estado_visual(estado)} · "
+            f"{combo.get('nombre', 'Mi combinada')}"
+        )
+
+        with st.expander(titulo):
+            fecha = str(
+                combo.get("fecha_creacion", "")
+            )
+
             st.caption(
                 "📅 Creada: "
-                + str(combo["fecha_creacion"])[:19]
-                .replace("T", " ")
+                + fecha[:19].replace("T", " ")
                 + " UTC"
             )
 
-            probability = (
-                combo.get("probabilidad_conjunta")
+            st.markdown(
+                f"**Estado:** {estado_visual(estado)}"
             )
 
-            if probability is not None:
+            probabilidad = combo.get(
+                "probabilidad_conjunta"
+            )
+
+            if probabilidad is not None:
                 st.metric(
                     "🎯 Probabilidad conjunta estimada",
-                    f"{float(probability):.2f}%",
+                    f"{float(probabilidad):.2f}%",
                 )
 
-            if combo_picks:
-                rows = []
-
-                for pick in combo_picks:
-                    rows.append({
-                        "Liga": pick["liga"],
-                        "Partido": (
-                            pick["equipo_visitante"]
-                            + " vs "
-                            + pick["equipo_local"]
-                        ),
-                        "Selección": pick["seleccion"],
-                        "Probabilidad %": (
-                            float(pick["probabilidad"])
-                            if pick["probabilidad"] is not None
-                            else None
-                        ),
-                        "Estado": pick["estado"],
-                    })
-
-                st.dataframe(
-                    pd.DataFrame(rows),
-                    hide_index=True,
-                    use_container_width=True,
-                )
-
-            else:
+            if not combo_picks:
                 st.warning(
-                    "Esta combinada no tiene selecciones "
-                    "registradas. Puede tratarse de un "
-                    "guardado incompleto."
+                    "Esta combinada no tiene selecciones. "
+                    "Puede existir un guardado incompleto."
                 )
+                continue
 
-            st.caption(
-                "Los resultados todavía no se actualizan "
-                "automáticamente. Las selecciones "
-                "permanecerán pendientes hasta implementar "
-                "el verificador de resultados."
+            rows = []
+
+            for pick in combo_picks:
+                prob = pick.get("probabilidad")
+
+                rows.append({
+                    "Liga": pick.get("liga"),
+                    "Partido": (
+                        str(pick.get("equipo_visitante", ""))
+                        + " vs "
+                        + str(pick.get("equipo_local", ""))
+                    ),
+                    "Selección": pick.get("seleccion"),
+                    "Probabilidad %": (
+                        round(float(prob), 2)
+                        if prob is not None
+                        else None
+                    ),
+                    "Estado": estado_visual(
+                        pick.get("estado")
+                    ),
+                    "Resultado ESPN": (
+                        pick.get("resultado_final")
+                        or "Sin resultado registrado"
+                    ),
+                })
+
+            st.dataframe(
+                pd.DataFrame(rows),
+                hide_index=True,
+                use_container_width=True,
             )
 
+            ganadas = sum(
+                p.get("estado") == "ganada"
+                for p in combo_picks
+            )
+
+            perdidas = sum(
+                p.get("estado") == "perdida"
+                for p in combo_picks
+            )
+
+            pendientes = sum(
+                p.get("estado") == "pendiente"
+                for p in combo_picks
+            )
+
+            anuladas = sum(
+                p.get("estado") == "anulada"
+                for p in combo_picks
+            )
+
+            st.caption(
+                f"✅ Ganadas: {ganadas} · "
+                f"❌ Perdidas: {perdidas} · "
+                f"⏳ Pendientes: {pendientes} · "
+                f"⚪ Anuladas: {anuladas}"
+            )
+
+    st.divider()
+
+    st.caption(
+        "Fuente de resultados: registros verificados "
+        "mediante ESPN y almacenados en Supabase. "
+        "El historial se actualiza al consultar nuevamente. "
+        "El registro automático periódico todavía "
+        "no está activado."
+    )
+
+    st.caption(
+        f"Combinadas anuladas: {combos_anuladas} · "
+        f"Selecciones pendientes: {picks_pendientes} · "
+        f"Selecciones anuladas: {picks_anuladas}"
+    )
 
 # =========================================================
 # CONSTRUCTOR DE COMBINADAS
